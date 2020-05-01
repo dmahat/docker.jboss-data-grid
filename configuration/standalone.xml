@@ -150,6 +150,7 @@
                     <authorization>
                         <identity-role-mapper/>
                         <role name="admin" permissions="READ WRITE BULK_READ BULK_WRITE EXEC LISTEN ADMIN"/>
+						<role name="cmuser" permissions="READ WRITE "/>
                     </authorization>
                 </security>
                 <global-state/>
@@ -163,8 +164,16 @@
             </cache-container>
         </subsystem>
         <subsystem xmlns="urn:infinispan:server:endpoint:9.4">
-            <hotrod-connector cache-container="local" socket-binding="hotrod">
+            <hotrod-connector cache-container="local" socket-binding="hotrod" >
                 <topology-state-transfer lazy-retrieval="false" lock-timeout="1000" replication-timeout="5000"/>
+				<authentication security-realm="ApplicationRealm" >
+				   <sasl server-name="PBBA" mechanisms="DIGEST-MD5" qop="auth">
+				    <policy>
+				      <no-anonymous value="true" />
+				    </policy>
+				    <property name="com.sun.security.sasl.digest.utf8">true</property>
+				   </sasl>
+				</authentication>
             </hotrod-connector>
             <rest-connector cache-container="local" socket-binding="rest">
                 <authentication security-realm="ApplicationRealm" auth-method="BASIC"/>
